@@ -48,6 +48,7 @@ async def create_appointment(
     slot.is_available = False
 
     appointment = Appointment(
+        client=user,
         client_id=user.id,
         service_id=service.id,
         slot_id=slot.id,
@@ -116,3 +117,25 @@ async def cancel_by_client(
         print(f"Ошибка уведомления: {e}")
 
     return {"status": "ok", "message": "Запись отменена"}
+
+@router.get("/clients/appointments/upcoming", response_model=List[AppointmentResponse])
+async def get_upcoming_appointments(
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    stmt = (
+        select(Appointment)
+        .join(ScheduleSlot)
+        .options(selectinload(Appointment.service), selectinload(Appointment.slot))
+        .where(
+            Appointment.status == AppointmentStatus.BOOKED,
+            ScheduleSlot.datetime_start >= datetime.now()
+        )
+        .where(
+            Appointment.client_id == user.id
+        )
+        .order_by(ScheduleSlot.datetime_start)
+    )
+    res = await db.execute(stmt)
+    return res.scalars().all()
+

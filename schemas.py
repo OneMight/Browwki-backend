@@ -49,11 +49,15 @@ class AppointmentCreate(BaseModel):
     service_id: int
     slot_id: int
 
+class UserResponse(BaseModel):
+    first_name: str
+    username: str
 
 class AppointmentResponse(BaseModel):
     id: int
     client_id: int
     service_id: int
+    client: UserResponse
     slot_id: int
     status: AppointmentStatus
     created_at: datetime

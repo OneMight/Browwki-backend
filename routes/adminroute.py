@@ -16,7 +16,7 @@ from bot_instance import bot
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
 
-@router.get("/appointments/upcoming", response_model=List[AppointmentResponse])
+@router.get("/appointments/coming", response_model=List[AppointmentResponse])
 async def get_upcoming_appointments(
     db: AsyncSession = Depends(get_db),
     admin: User = Depends(get_current_admin)
@@ -24,7 +24,8 @@ async def get_upcoming_appointments(
     stmt = (
         select(Appointment)
         .join(ScheduleSlot)
-        .options(selectinload(Appointment.service), selectinload(Appointment.slot))
+        .join(Appointment.client)
+        .options(selectinload(Appointment.service), selectinload(Appointment.slot), selectinload(Appointment.client))
         .where(
             Appointment.status == AppointmentStatus.BOOKED,
             ScheduleSlot.datetime_start >= datetime.now()
