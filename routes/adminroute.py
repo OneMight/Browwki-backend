@@ -35,6 +35,16 @@ async def get_upcoming_appointments(
     res = await db.execute(stmt)
     return res.scalars().all()
 
+@router.get("/schedule/", response_model=List[SlotResponse])
+async def get_available_slots(db: AsyncSession = Depends(get_db)):
+    now = datetime.now()
+    stmt = (
+        select(ScheduleSlot)
+        .where(ScheduleSlot.datetime_start >= now)
+        .order_by(ScheduleSlot.datetime_start)
+    )
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 @router.post("/appointments/{appointment_id}/cancel")
 async def cancel_by_admin(
@@ -73,6 +83,23 @@ async def cancel_by_admin(
 
     return {"status": "ok", "message": "Запись отменена, клиент уведомлен"}
 
+@router.delete('/schedule/slots/{slot_id}/delete')
+async def delete_slot(
+    slot_id:int,
+    db: AsyncSession = Depends(get_db),
+    
+):
+    stmt =(
+        select(ScheduleSlot)
+        .where(ScheduleSlot.id == slot_id)
+    )
+    res = await db.execute(stmt)
+    slot = res.scalar_one_or_none()
+    if not slot:
+        raise HTTPException(status_code=404, detail="Слот не найден")
+    await db.delete(slot)
+    await db.commit()
+    return
 
 @router.post("/schedule/slots", response_model=List[SlotResponse])
 async def create_schedule_slots(
