@@ -150,6 +150,24 @@ async def update_service(
     await db.commit()
     await db.refresh(service)
     return service
+@router.delete("/services/delete/{service_id}")
+async def update_service(
+    service_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    
+    stmt =(
+        select(Service)
+        .where(Service.id == service_id)
+    )
+    res = await db.execute(stmt)
+    service = res.scalar_one_or_none()
+    if not service:
+        raise HTTPException(status_code=404, detail="Слот не найден")
+    service.is_active = False
+    await db.commit()
+    await db.refresh(service)
+    return
 
 
 @router.get("/stats", response_model=AdminStatsResponse)

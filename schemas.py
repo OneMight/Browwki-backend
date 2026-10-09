@@ -27,6 +27,10 @@ class ServiceCreate(ServiceBase):
 
 class ServiceUpdate(ServiceBase):
     is_active: Optional[bool] = None
+    description: Optional[str] = None
+    title: Optional[str] = None
+    duration_minutes: Optional[int] = None
+    price: Optional[int] = None
 
 
 class ServiceResponse(ServiceBase):
