@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 from models import UserRole, AppointmentStatus
-
+from datetime import date as DateType
 
 class TelegramAuthSchema(BaseModel):
     init_data: str  
@@ -70,9 +70,22 @@ class AppointmentResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class TopServiceItem(BaseModel):
+    service_name: str
+    total_ordered: int
+    completed_count: int
+
+class DailyStatsItem(BaseModel):
+    date: DateType  
+    total_booked: int
+    completed_count: int
+
 class AdminStatsResponse(BaseModel):
     period: str
     total_appointments: int
     completed_appointments: int
     cancelled_appointments: int
+    waiting_appointments: int
     total_revenue: float
+    top_services: List[TopServiceItem]
+    daily_stats: List[DailyStatsItem]
