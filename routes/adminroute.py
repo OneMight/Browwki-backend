@@ -15,7 +15,7 @@ from bot_instance import bot
 from datetime import datetime, timezone
 from calendar import monthrange
 from collections import defaultdict
-from sqlalchemy import select, func, case, desc, Date
+from sqlalchemy import select, func, case, desc, Date, cast
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
 
@@ -334,7 +334,7 @@ async def get_admin_stats(
     top_res = await db.execute(top_services_stmt)
     top_services = [dict(row) for row in top_res.mappings().all()]
 
-    date_field = func.strftime("%Y-%m-%d", Appointment.created_at)
+    date_field = cast(Appointment.created_at, Date)
     
     daily_stmt = (
         select(

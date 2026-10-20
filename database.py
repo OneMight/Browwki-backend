@@ -1,17 +1,27 @@
 import os
 from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from models import Base  
 from dotenv import load_dotenv
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from models import Base
 
-# Для PostgreSQL (в будущем):
-# DATABASE_URL = "postgresql+asyncpg://user:password@localhost:5432/browwki_db"
+load_dotenv()
+
+
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./browwki.db")
+
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+elif DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+connect_args = {}
+if "sqlite" in DATABASE_URL:
+    connect_args["check_same_thread"] = False
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=True, 
+    echo=True,
+    connect_args=connect_args
 )
 
 async_session_maker = async_sessionmaker(
