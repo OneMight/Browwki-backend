@@ -5,6 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import update
+from typing import Literal
 from models import User, Service, ScheduleSlot, Appointment, AppointmentStatus
 from schemas import (
     ServiceCreate, ServiceUpdate, ServiceResponse,
@@ -271,7 +272,7 @@ async def update_service(
 
 @router.get("/stats", response_model=AdminStatsResponse)
 async def get_admin_stats(
-    period: str = Query("week", enum=["week", "month"]),
+    period: Literal["week", "month"] = Query("week"),
     db: AsyncSession = Depends(get_db),
     admin: User = Depends(get_current_admin)
 ):
