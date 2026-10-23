@@ -197,6 +197,7 @@ async def get_slots_per_month(
             slot_data["appointment"] = {
                 "id": slot.appointment.id,
                 "status": slot.appointment.status,
+                "portfolio_checkbox":slot.appointment.portfolio_checkbox,
                 "slot":{
                     "id": slot.id,
                     "datetime_start": slot.datetime_start,

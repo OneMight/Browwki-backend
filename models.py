@@ -143,7 +143,8 @@ class Appointment(Base):
         server_default=func.now(),
         nullable=False
     )
-
+    personal_data_checkbox: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    portfolio_checkbox: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     client: Mapped["User"] = relationship("User", back_populates="appointments")
     service: Mapped["Service"] = relationship("Service", back_populates="appointments")
     slot: Mapped["ScheduleSlot"] = relationship("ScheduleSlot", back_populates="appointment")

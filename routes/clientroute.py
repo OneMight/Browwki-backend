@@ -52,6 +52,8 @@ async def create_appointment(
         client_id=user.id,
         service_id=service.id,
         slot_id=slot.id,
+        personal_data_checkbox=payload.personal_data_checkbox,
+        portfolio_checkbox=payload.portfolio_checkbox,
         status=AppointmentStatus.BOOKED
     )
     db.add(appointment)

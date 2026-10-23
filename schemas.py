@@ -52,6 +52,8 @@ class SlotResponse(BaseModel):
 class AppointmentCreate(BaseModel):
     service_id: int
     slot_id: int
+    personal_data_checkbox: bool
+    portfolio_checkbox: bool
 
 class UserResponse(BaseModel):
     first_name: str
@@ -67,6 +69,8 @@ class AppointmentResponse(BaseModel):
     created_at: datetime
     service: ServiceResponse
     slot: SlotResponse
+    personal_data_checkbox: bool
+    portfolio_checkbox: bool
     model_config = ConfigDict(from_attributes=True)
 
 
